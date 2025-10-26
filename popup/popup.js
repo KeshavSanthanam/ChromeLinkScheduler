@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 	const list = document.getElementById("scheduledList");
 	const historyList = document.getElementById("historyList");
 	const clearBtn = document.getElementById("clearHistory");
+	const exportBtn = document.getElementById("exportHistory");
 
 	const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
@@ -29,6 +30,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 	clearBtn.onclick = async () => {
 		await chrome.storage.local.set({ history: [] });
 		renderLists();
+	};
+
+	exportBtn.onclick = async () => {
+		const { history } = await chrome.storage.local.get({ history: [] });
+		const blob = new Blob([JSON.stringify(history, null, 2)], { type: 'application/json' });
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = 'link_scheduler_history.json';
+		a.click();
+		URL.revokeObjectURL(url);
 	};
 
 	async function removeEntry(index) {
