@@ -3,13 +3,12 @@
   "name": "Link Scheduler",
   "version": "1.0",
   "description": "Schedule links to reopen later or remind you about them.",
-  "permissions": ["storage", "notifications", "alarms", "tabs"],
+  "permissions": ["storage", "notifications", "alarms", "tabs", "activeTab"],
   "action": {
     "default_popup": "popup/popup.html",
     "default_icon": "icons/icon128.png"
   },
   "background": {
     "service_worker": "background.js"
-  },
-  "host_permissions": ["<all_urls>"]
+  }
 }
