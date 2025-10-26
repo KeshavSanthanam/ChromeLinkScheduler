@@ -7,4 +7,9 @@ Made by Keshav Santhanam
 https://keshavsanthanam.github.io/
 
 ## Images
-![](path/to/your/image.png)
+- Some Scheduled Actions
+![Some Scheduled Actions](demo_images/1.png)
+- Blank Default Page
+![Blank Default Page](demo_images/2.png)
+- Some History Items
+![Some History Items](demo_images/3.png)
