@@ -6,9 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 	const historyList = document.getElementById("historyList");
 	const clearBtn = document.getElementById("clearHistory");
 
-
 	const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-
 
 	scheduleBtn.onclick = async () => {
 		const datetime = new Date(datetimeInput.value);
@@ -16,7 +14,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 		const now = Date.now();
 		const minutesUntil = (when - now) / 60000;
 		const id = JSON.stringify({ url: tab.url, type: actionInput.value });
-
 
 		if (minutesUntil > 0) {
 			chrome.alarms.create(id, { when });
@@ -29,24 +26,55 @@ document.addEventListener("DOMContentLoaded", async () => {
 		}
 	};
 
-
 	clearBtn.onclick = async () => {
 		await chrome.storage.local.set({ history: [] });
 		renderLists();
 	};
 
+	async function removeEntry(index) {
+		const { entries } = await chrome.storage.local.get({ entries: [] });
+		const entry = entries[index];
+		const alarmId = JSON.stringify({ url: entry.url, type: entry.type });
+		entries.splice(index, 1);
+		await chrome.alarms.clear(alarmId);
+		await chrome.storage.local.set({ entries });
+		renderLists();
+	}
+
+	async function cleanupPastEntries() {
+		const now = Date.now();
+		const { entries = [], history = [] } = await chrome.storage.local.get(["entries", "history"]);
+		const remaining = [];
+		for (const e of entries) {
+			const time = new Date(e.time).getTime();
+			if (time <= now) {
+				history.push(e);
+				const alarmId = JSON.stringify({ url: e.url, type: e.type });
+				await chrome.alarms.clear(alarmId);
+			} else {
+				remaining.push(e);
+			}
+		}
+		await chrome.storage.local.set({ entries: remaining, history });
+	}
 
 	async function renderLists() {
+		await cleanupPastEntries();
 		const { entries, history } = await chrome.storage.local.get({ entries: [], history: [] });
 
-
 		list.innerHTML = "";
-		for (const e of entries) {
+		entries.forEach((e, i) => {
 			const li = document.createElement("li");
-			li.textContent = `${e.type.toUpperCase()}: ${e.url} at ${e.time}`;
+			li.innerHTML = `${e.type.toUpperCase()}: ${e.url} at ${e.time} <span class='remove' data-index='${i}'><strong>X</strong></span>`;
 			list.appendChild(li);
-		}
+		});
 
+		document.querySelectorAll('.remove').forEach(btn => {
+			btn.addEventListener('click', async (e) => {
+				const index = parseInt(e.target.closest('span').getAttribute('data-index'));
+				await removeEntry(index);
+			});
+		});
 
 		historyList.innerHTML = "";
 		for (const h of history) {
@@ -55,7 +83,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 			historyList.appendChild(li);
 		}
 	}
-
 
 	renderLists();
 });

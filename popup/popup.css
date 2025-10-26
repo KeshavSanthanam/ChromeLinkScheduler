@@ -16,3 +16,13 @@ ul {
 	overflow-y: auto;
 	padding-left: 16px;
 }
+
+.remove {
+	color: red;
+	cursor: pointer;
+	margin-left: 5px;
+}
+
+.remove strong {
+	font-weight: bold;
+}
