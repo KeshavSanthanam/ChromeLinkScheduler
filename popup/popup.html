@@ -6,7 +6,7 @@
 </head>
 
 <body>
-	<h2>Schedule Current URL</h2>
+	<h2>Schedule Link</h2>
 	<input type="datetime-local" id="datetime">
 	<select id="action">
 		<option value="open">Open Later</option>
@@ -14,11 +14,15 @@
 	</select>
 	<button id="schedule">Schedule</button>
 
+
 	<h3>Scheduled</h3>
 	<ul id="scheduledList"></ul>
 
+
 	<h3>History</h3>
 	<ul id="historyList"></ul>
+	<button id="clearHistory">Clear History</button>
+
 
 	<script src="popup.js"></script>
 </body>

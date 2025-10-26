@@ -4,8 +4,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 	const scheduleBtn = document.getElementById("schedule");
 	const list = document.getElementById("scheduledList");
 	const historyList = document.getElementById("historyList");
+	const clearBtn = document.getElementById("clearHistory");
+
 
 	const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
 
 	scheduleBtn.onclick = async () => {
 		const datetime = new Date(datetimeInput.value);
@@ -13,6 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 		const now = Date.now();
 		const minutesUntil = (when - now) / 60000;
 		const id = JSON.stringify({ url: tab.url, type: actionInput.value });
+
 
 		if (minutesUntil > 0) {
 			chrome.alarms.create(id, { when });
@@ -25,8 +29,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 		}
 	};
 
+
+	clearBtn.onclick = async () => {
+		await chrome.storage.local.set({ history: [] });
+		renderLists();
+	};
+
+
 	async function renderLists() {
 		const { entries, history } = await chrome.storage.local.get({ entries: [], history: [] });
+
 
 		list.innerHTML = "";
 		for (const e of entries) {
@@ -35,6 +47,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 			list.appendChild(li);
 		}
 
+
 		historyList.innerHTML = "";
 		for (const h of history) {
 			const li = document.createElement("li");
@@ -42,6 +55,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 			historyList.appendChild(li);
 		}
 	}
+
 
 	renderLists();
 });
