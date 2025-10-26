@@ -1,9 +1,18 @@
 body {
-font-family: sans-serif;
-width: 300px;
-padding: 10px;
+	font-family: sans-serif;
+	width: 300px;
+	padding: 10px;
 }
-input, select, button {
-width: 100%;
-margin: 5px 0;
+
+input,
+select,
+button {
+	width: 100%;
+	margin: 5px 0;
+}
+
+ul {
+	max-height: 150px;
+	overflow-y: auto;
+	padding-left: 16px;
 }
